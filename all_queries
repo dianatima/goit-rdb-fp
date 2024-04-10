@@ -1,0 +1,38 @@
+USE pandemic;
+
+p_3
+————————————————————————————————————————————————
+
+SELECT entity_id, AVG(Number_rabies) as avg_rabies, MIN(Number_rabies) as min_rabies, MAX(Number_rabies) as max_rabies
+FROM pandemic.infectious_cases_norm
+WHERE Number_rabies != ''
+GROUP BY entity_id
+ORDER BY avg_rabies desc
+LIMIT 10;
+
+p_4
+—————————————————————————————————————————————————————————
+SELECT infectious_case_id, year, MAKEDATE(year, 1) as year_day, CURDATE() as current_day,
+TIMESTAMPDIFF(YEAR,MAKEDATE(year, 1),CURDATE()) as year_diff
+FROM infectious_cases_norm;
+
+p_5
+—————————————————————————————————————————————————————————
+DROP FUNCTION IF EXISTS CalculateDateDiff;
+
+DELIMITER //
+
+CREATE FUNCTION CalculateDateDiff(year INT)
+RETURNS INT
+DETERMINISTIC 
+NO SQL
+BEGIN
+    DECLARE result INT;
+    SET result = TIMESTAMPDIFF(YEAR,MAKEDATE(year, 1),CURDATE());
+    RETURN result;
+END //
+
+DELIMITER ;
+
+SELECT year, MAKEDATE(year, 1) as year_day, CURDATE() as current_year, CalculateDateDiff(year) as year_diff
+FROM pandemic.infectious_cases_norm;
