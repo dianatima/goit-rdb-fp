@@ -1,5 +1,24 @@
 USE pandemic;
 
+p_2
+————————————————————————————————————————————————
+CREATE TABLE entities (entity_id INT NOT NULL AUTO_INCREMENT, name TEXT, code TEXT, PRIMARY KEY (entity_id));
+
+INSERT INTO entities (name, code)
+(SELECT DISTINCT entity, code FROM infectious_cases);
+
+
+
+CREATE TABLE infectious_cases_norm (infectious_case_id INT NOT NULL AUTO_INCREMENT, entity_id INT NOT NULL, year INT NOT NULL, number_yaws TEXT, 
+polio_cases INT DEFAULT NULL, cases_guinea_worm INT, number_rabies TEXT, number_malaria TEXT, number_hiv TEXT, number_tuberculosis TEXT,
+number_smallpox TEXT, number_cholera_cases TEXT, PRIMARY KEY (infectious_case_id),
+ CONSTRAINT fk_infectious_cases_norm_entities FOREIGN KEY (entity_id) REFERENCES entities (entity_id));
+
+ INSERT INTO infectious_cases_norm (entity_id, year, number_yaws, polio_cases, cases_guinea_worm, number_rabies, number_malaria, number_hiv, number_tuberculosis, 
+ number_smallpox, number_cholera_cases)
+ (SELECT (SELECT entity_id FROM entities WHERE name=p.entity),year, number_yaws, polio_cases, cases_guinea_worm, number_rabies, number_malaria, number_hiv, number_tuberculosis, 
+ number_smallpox, number_cholera_cases FROM infectious_cases p);
+
 p_3
 ————————————————————————————————————————————————
 
